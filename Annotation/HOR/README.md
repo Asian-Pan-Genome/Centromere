@@ -1,29 +1,71 @@
-HOR Annotation Files
+## HOR Annotation Files
 
-Two sets of higher-order repeat (HOR) annotation files are provided, generated using HiCAT and HORmon.
+Two sets of higher-order repeat (HOR) annotation files are provided, generated using **HiCAT** and **HORmon**.
 
-HiCAT (HOR_HiCAT)
+---
 
-For each haploid assembly, two output files are available:
+### **HiCAT (`HOR_HiCAT`)**
 
-1. ${sample}_${hap}_HiCAT.hor.summary.xls
+For each haploid assembly, two output files are included:
 
-This file contains the complete set of HOR structural variants (StVs), including both top-layer and cover-layer annotations.
-Each row includes the following fields:
+---
 
-sample    hap    blockID    block_start    block_end    block_len    block_monomer_count
-sample_hap_chromosome    HORstart    HORend    index_start    index_end
-nrepeat    HOR/monomer_id    layer    reorder_HOR
+#### **1. `${sample}_${hap}_HiCAT.hor.summary.xls`**
 
-2. ${sample}_${hap}.HiCAT.horstv.bed
+Contains the full set of HOR structural variants (StVs), including both **top-layer** and **cover-layer** annotations.
 
-This BED file provides decomposed HOR StVs, intended primarily for visualization.
-Each row includes:
+**Columns:**
 
-sample_hap_chromosome    start    end    HOR/monomer_id    HORindex    HOR_color
+| **Column name**            | **Description** |
+|----------------------------|------------------|
+| **sample**                 | Sample ID |
+| **hap**                    | Haploid (e.g., Mat/Pat) |
+| **blockID**                | Block identifier |
+| **block_start**            | Block start coordinate |
+| **block_end**              | Block end coordinate |
+| **block_length**              | Length of the block |
+| **block_monomer_count**    | Number of monomers in the block |
+| **sample_hap_chromosome**  | Chromosome identifier |
+| **horstart**               | HOR start position |
+| **horend**                 | HOR end position |
+| **index_start**            | Start index of monomers |
+| **index_end**              | End index of monomers |
+| **nrepeat**                | Copy number of HOR unit |
+| **HOR/monomer_id**         | HOR ID or monomer ID |
+| **layer**                  | Annotation layer (top/cover) |
+| **reorder_HOR**            | Reordered HOR (e. g. 2-3-4-1 ---> 1-2-3-4) |
 
-HORmon (HOR_HORmon)
+---
 
-For each haploid assembly, the HORmon output contains monomer-level annotations, with each row structured as follows:
+#### **2. `${sample}_${hap}.HiCAT.horstv.bed`**
 
-sample_hap_chromosome    start    end    monomer_id    HORarray_index    HORarray_color    HOR_color
+Provides **decomposed HOR structural variants** for visualization.
+
+**Columns:**
+
+| **Column name**            | **Description** |
+|----------------------------|------------------|
+| **sample_hap_chromosome**  | Chromosome identifier |
+| **start**                  | Genomic start |
+| **end**                    | Genomic end |
+| **HOR/monomer_id**         | HOR ID or monomer ID |
+| **HORindex**               | Index of the HOR/monomer |
+| **HOR_color**              | Visualization color code |
+
+---
+
+### **HORmon (`HOR_HORmon`)**
+
+For each haploid assembly, the HORmon output provides monomer-level annotations.
+
+**Columns:**
+
+| **Column name**            | **Description** |
+|----------------------------|------------------|
+| **sample_hap_chromosome**  | Chromosome identifier |
+| **start**                  | Genomic start |
+| **end**                    | Genomic end |
+| **monomer_id**             | Monomer identifier |
+| **HORrarray**               | HOR array assignment |
+| **HORarray_color**         | Color code for HOR array |
+| **HOR_color**              | Color code for monomer/HOR |
