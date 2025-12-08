@@ -261,24 +261,23 @@ echo "#!/bin/bash
 #SBATCH --cpus-per-task=30
 #SBATCH --mem=150g
 
-#source /share/home/zhanglab/user/sunyanqing/miniconda3/bin/activate repeat
-#if [ ! -d \"repeat/01_out_repeatmasker\" ];then mkdir -p repeat/01_out_repeatmasker; fi
+if [ ! -d \"repeat/01_out_repeatmasker\" ];then mkdir -p repeat/01_out_repeatmasker; fi
 
-#res=\$(ls -A \"repeat/01_out_repeatmasker\")
-#if [ -z \"\$res\" ];then
-#    $repeatmasker -species human -e rmblast  -s -pa 30 $genome  -html -gff -dir repeat/01_out_repeatmasker
-#    echo \"{log}: $prefix ${hap} repeatmasker done\"
-#else
-#    echo \"{log}: $prefix ${hap} repeatmasker have already been done.\"
-#conda deactivate
-#fi
+res=\$(ls -A \"repeat/01_out_repeatmasker\")
+if [ -z \"\$res\" ];then
+    $repeatmasker -species human -e rmblast  -s -pa 30 $genome  -html -gff -dir repeat/01_out_repeatmasker
+    echo \"{log}: $prefix ${hap} repeatmasker done\"
+else
+    echo \"{log}: $prefix ${hap} repeatmasker have already been done.\"
+conda deactivate
+fi
 
 ### hsat1 ###
-#grep \"Motif:SAR\\\"\" repeat/01_out_repeatmasker/*fasta.out.gff | awk '{print\$1\"\t\"\$4-1\"\t\"\$5\"\t\"\$7\"\tHSat1A\"}' | sort -k1,1 -V -k2,2n > repeat/01_out_repeatmasker/hsat1a.raw.bed
-#grep \"Motif:HSATI\\\"\" repeat/01_out_repeatmasker/*fasta.out.gff | awk '{print\$1\"\t\"\$4-1\"\t\"\$5\"\t\"\$7\"\tHSat1B\"}' | sort -k1,1 -V -k2,2n  > repeat/01_out_repeatmasker/hsat1b.raw.bed
-#python $hsat1py -i repeat/01_out_repeatmasker/hsat1a.raw.bed -o repeat/01_out_repeatmasker/hsat1a.bed
-#python $hsat1py -i repeat/01_out_repeatmasker/hsat1b.raw.bed -o repeat/01_out_repeatmasker/hsat1b.bed
-#cat repeat/01_out_repeatmasker/hsat1a.bed repeat/01_out_repeatmasker/hsat1b.bed | sort -k1,1 -V -k2,2n > ${prefix}.${hap}.HSat1.bed
+grep \"Motif:SAR\\\"\" repeat/01_out_repeatmasker/*fasta.out.gff | awk '{print\$1\"\t\"\$4-1\"\t\"\$5\"\t\"\$7\"\tHSat1A\"}' | sort -k1,1 -V -k2,2n > repeat/01_out_repeatmasker/hsat1a.raw.bed
+grep \"Motif:HSATI\\\"\" repeat/01_out_repeatmasker/*fasta.out.gff | awk '{print\$1\"\t\"\$4-1\"\t\"\$5\"\t\"\$7\"\tHSat1B\"}' | sort -k1,1 -V -k2,2n  > repeat/01_out_repeatmasker/hsat1b.raw.bed
+python $hsat1py -i repeat/01_out_repeatmasker/hsat1a.raw.bed -o repeat/01_out_repeatmasker/hsat1a.bed
+python $hsat1py -i repeat/01_out_repeatmasker/hsat1b.raw.bed -o repeat/01_out_repeatmasker/hsat1b.bed
+cat repeat/01_out_repeatmasker/hsat1a.bed repeat/01_out_repeatmasker/hsat1b.bed | sort -k1,1 -V -k2,2n > ${prefix}.${hap}.HSat1.bed
 
 ### bsat ###
 egrep \"BSAT|Beta|LSAU\" repeat/01_out_repeatmasker/*fasta.out.gff | awk '{print\$1\"\t\"\$4-1\"\t\"\$5\"\tBSat\t0\t\"\$7\"\t\"\$4-1\"\t\"\$5\"\t#EEA6B7\"}' | sort -k1,1 -V -k2,2n > repeat/01_out_repeatmasker/bsat.bed
@@ -298,12 +297,41 @@ echo "#!/bin/bash
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=10g
 
+if [ \$# -eq 0 ]; then
+    echo \"Error: globalflag parameter (True or False) is required\"
+    echo \"Usage: \$0 <globalflag>\"
+    exit 1
+fi
+
+globalflag=\$1
+
+# Validate parameter value
+if [ \"\$globalflag\" != \"True\" ] && [ \"\$globalflag\" != \"False\" ]; then
+    echo \"Error: globalflag must be 'True' or 'False'\"
+    exit 1
+fi
+
 asat=false; hsat1=false; hsat23=false; bsat=false; gsat=false
 
-if [ ! -f \"${prefix}_${hap}.asat.bed\" ]; then
-    echo \"${prefix}_${hap}.asat.bed could not find!\"
+# if [ ! -f \"${prefix}_${hap}.asat.bed\" ]; then
+#     echo \"${prefix}_${hap}.asat.bed could not find!\"
+# else
+#     asat=true
+# fi
+
+if [ \"\$globalflag\" == \"False\" ]; then
+    if [ ! -f \"${prefix}_${hap}.asat.bed\" ]; then
+        echo \"${prefix}_${hap}.asat.bed could not find!\"
+    else
+        asat=true
+    fi
 else
-    asat=true
+    echo \"merge asat annotation based on MonomerGlobalDB!\"
+    if [ ! -f \"${prefix}_${hap}.asat.global.bed\" ]; then
+        echo \"${prefix}_${hap}.asat.global.bed could not find!\"
+    else
+        asat=true
+    fi
 fi
 
 if [ ! -f \"${prefix}.${hap}.HSat1.bed\" ]; then
@@ -340,12 +368,12 @@ rm ${prefix}_${hap}.asat.tmp
 if [ ! -d \"barplot/round1\" ];then mkdir -p barplot/round1; fi
 
 if [ -f \"${prefix}.round0.cenanno\" ] && [ -f \"${prefix}.round0.cenpos\" ];then
-    #python $barplotpy -anno ${prefix}.round0.cenanno \\
-    #                 -pos ${prefix}.round0.cenpos \\
-    #                 -fai $ffai \\
-    #                 -o ${prefix}.round1.cenpos \\
-    #                 -p ${prefix}.${hap} \\
-    #                 -plotOutdir barplot/round1
+    python $barplotpy -anno ${prefix}.round0.cenanno \\
+                     -pos ${prefix}.round0.cenpos \\
+                     -fai $ffai \\
+                     -o ${prefix}.round1.cenpos \\
+                     -p ${prefix}.${hap} \\
+                     -plotOutdir barplot/round1
     $bedtools intersect -a ${prefix}.round0.cenanno -b ${prefix}.round1.cenpos -wa > ${prefix}_${hap}.cenanno.bed
 else
     echo \"could not find inputfiles!\"
