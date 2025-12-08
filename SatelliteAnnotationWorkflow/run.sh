@@ -11,8 +11,8 @@ cd $prefix/${hap}
 
 ## soft-link ##
 genome="$assemblyDir/${prefix}/${hap}/${prefix}_${hap}.fasta"
-if [ ! -f "${prefix}_${hap}.v0.9.fasta.fai" ];then $samtools faidx $genome;fi
-ffai="${prefix}_${hap}_chrR.fasta.fai"
+if [ ! -f "${prefix}_${hap}.fasta.fai" ];then $samtools faidx $genome;fi
+ffai="${prefix}_${hap}.fasta.fai"
 
 ## alpha satellite ##
 echo  "#!/bin/bash
