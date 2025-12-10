@@ -194,7 +194,7 @@ def chrom_plot(prefix, outdir, annodf, chromlendf, peridf):
 	plt.title('Centromere Position on Chromosome (%s)' % (prefix))
 
 	legend_patches = []
-	new_color_map = {('ASat' if ty.startswith('S') else ty): color for ty, color in color_map.items()}
+	new_color_map = {('ASat' if str(ty).startswith('S') or str(ty).isdigit() else ty): color for ty, color in color_map.items()}
 	for ty, color in new_color_map.items():
 		legend_patches.append(mpatches.Patch(color=color, label=ty))
 	plt.legend(handles=legend_patches, loc='center right')
@@ -273,4 +273,5 @@ if __name__ == "__main__":
 		single_plot( args.outdir, annodf, peridf, chrom, args.prefix)
 		print("[log]: %s pericentric distribution plot done!" % (chrom))
 	# single_plot(prefix, outdir, annodf, peridf, 'chr6')
+
 
