@@ -324,6 +324,7 @@ if [ \"\$globalflag\" == \"False\" ]; then
         echo \"${prefix}_${hap}.asat.bed could not find!\"
     else
         asat=true
+        asatbed=\"${prefix}_${hap}.asat.bed\"
     fi
 else
     echo \"merge asat annotation based on MonomerGlobalDB!\"
@@ -331,6 +332,7 @@ else
         echo \"${prefix}_${hap}.asat.global.bed could not find!\"
     else
         asat=true
+        asatbed=\"${prefix}_${hap}.asat.global.bed\"
     fi
 fi
 
@@ -360,7 +362,7 @@ fi
 
 if [[ \"\$asat\" = true && \"\$hsat1\" = true && \"\$hsat23\" = true && \"\$bsat\" = true && \"\$gsat\" = true ]] ; then
     awk '{if (\$2 < \$3) print}' ${prefix}*.HSat2and3_Regions.bed > ${prefix}.${hap}.HSat2and3_Regions.tmp
-    awk '{print \$1\"\t\"\$2\"\t\"\$3\"\t\"\$4\"\t\"\$5\"\t\"\$6\"\t\"\$2\"\t\"\$3\"\t#C91D32\"}' ${prefix}_${hap}.asat.bed > ${prefix}_${hap}.asat.tmp
+    awk '{print \$1\"\t\"\$2\"\t\"\$3\"\t\"\$4\"\t\"\$5\"\t\"\$6\"\t\"\$2\"\t\"\$3\"\t#C91D32\"}' \$asatbed > ${prefix}_${hap}.asat.tmp
     cat ${prefix}_${hap}.asat.tmp ${prefix}.${hap}.HSat1.bed ${prefix}.${hap}.HSat2and3_Regions.tmp ${prefix}.${hap}.bsat.bed ${prefix}.${hap}.gsat.bed| sort -k1,1 -V -k2,2n | sed \"s/120,161,187/#00B0F0/g\" | sed \"s/51,51,102/#2D529F/g\" > ${prefix}.round0.cenanno
 fi
 rm ${prefix}_${hap}.asat.tmp
