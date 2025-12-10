@@ -162,7 +162,7 @@ def chrom_plot(prefix, outdir, annodf, chromlendf, peridf):
 	plt.figure(figsize=(15, int(len(chromosomes)*0.25)))
 
 	color_map = dict(zip(annodf['Type'], annodf['Color']))
-	print(color_map)
+	# print(color_map)
 
 	# peridf = peridf.sort_values(by='Chromosome').copy()
 	for index, row in peridf.iterrows():
@@ -273,3 +273,4 @@ if __name__ == "__main__":
 		single_plot( args.outdir, annodf, peridf, chrom, args.prefix)
 		print("[log]: %s pericentric distribution plot done!" % (chrom))
 	# single_plot(prefix, outdir, annodf, peridf, 'chr6')
+
