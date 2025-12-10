@@ -84,7 +84,7 @@ bash 0barplot.sh False
 bash 0barplot.sh True
 ```
 ## Output files
-- **Centromeric Coordinates**:
+- **(Peri-)Centromeric Coordinates**:
   
   ```${sample}/${hap}/${sample}_${hap}.round1.cenpos```
       formated as ```chromosome\tstart\tend```
