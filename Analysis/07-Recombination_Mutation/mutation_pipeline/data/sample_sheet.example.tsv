@@ -1,0 +1,3 @@
+sample	name	hap	mon_bed	merged_bed	graph_dir	HiCAT_dir	assembly_fa
+SAMPLE1_Mat	SAMPLE1	Mat	data/examples/SAMPLE1/Mat/filter.asat.bed	data/examples/SAMPLE1/Mat/merged.cenanno.bed	data/examples/SAMPLE1/Mat/graph	data/examples/SAMPLE1/Mat/HiCAT	data/examples/SAMPLE1/Mat/assembly.fa
+SAMPLE1_Pat	SAMPLE1	Pat	data/examples/SAMPLE1/Pat/filter.asat.bed	data/examples/SAMPLE1/Pat/merged.cenanno.bed	data/examples/SAMPLE1/Pat/graph	data/examples/SAMPLE1/Pat/HiCAT	data/examples/SAMPLE1/Pat/assembly.fa

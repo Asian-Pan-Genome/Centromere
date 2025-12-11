@@ -1,0 +1,39 @@
+# workflow/Snakefile
+
+import pandas as pd
+import itertools 
+
+# --- 1. 加载配置 ---
+configfile: "../config/config.yaml"
+
+# --- 2. 读取并处理样本清单 ---
+# 使用pandas读取tsv文件
+# 将'sample'列设为索引(index)，这样可以极快地通过样本名查找信息
+SAMPLES = pd.read_csv(config["sample_sheet"], sep="\t").set_index("sample", drop=False)
+# chromosomes = [f'chr{i}' for i in range(1, 23)] + ['chrX', 'chrY']
+chromosomes = ['chr3', 'chr4']
+# 打印一下，确保读取正确 (只在启动时打印一次)
+print("--- Samples to be processed ---")
+print(SAMPLES)
+print("-----------------------------")
+print(f"Total samples: {len(SAMPLES)}")
+sample_list = SAMPLES.index.tolist()
+SAMPLE_PAIR = list(itertools.combinations(sample_list, 2))
+print(f"--- Generating {len(SAMPLE_PAIR)} pairwise comparisons (Upper-triangle). ---")
+# 将配对拆分成两个独立的列表 (sample_s 和 sample_t)，以供 expand 函数使用
+SOURCE_SAMPLES = [pair[0] for pair in SAMPLE_PAIR]
+TARGET_SAMPLES = [pair[1] for pair in SAMPLE_PAIR]
+
+print(f"results/{config['run_name']}/mutation/filtered_synteny_sample.bed")
+
+# --- 3. 定义最终目标 ---
+rule all:
+    input:
+        "results/{run_name}/flags/format_all.done".format(run_name=config["run_name"]),
+        "results/{run_name}/flags/horscan_distance_matrix.done".format(run_name=config["run_name"])
+
+# --- 4. 包含模块化规则 ---
+include: "rules/formatting.smk"
+include: "rules/horscan.smk"
+include: "rules/hor_distance.smk"
+include: "rules/mutation.smk"

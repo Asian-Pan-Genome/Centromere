@@ -1,0 +1,43 @@
+run_name: "APG_v1_analysis"
+
+sample_sheet: "data/sample_sheet.example.tsv"
+sample_QC: "data/sample_QC_placeholder.xlsx"
+
+tools:
+  horscan_v2: "path/to/HORSCAN"
+  horscan_mode: "10 4 2"
+
+blast_output_dir: "results/blast_output"
+blast_update_dir: "results/blast_update"
+
+hor_summary: "data/HiCAT_best_layer/{chrom}.HiCAT.hor.summary.final.hierarchy.bhlayer.xls"
+
+HORDistance:
+  weight: 0.5
+  type_score:
+    MTH: 1
+    MIS: 5
+    INS: 2
+    DEL: 2
+
+plotting:
+  cluster_method: "ward"
+  hor_layer_to_use: 1
+  missing_hor_color: "grey"
+  heatmap_cmap: "viridis"
+  label_fontsize: 8
+  row_height: 10
+  hor_plot_ratio: 0.5
+
+fasta_dir: "data/fasta"
+correct_fasta_dir: "data/correct_fasta"
+
+synteny_threshold: 0.9
+
+mask_params:
+  run_length: 3
+  sv_near: 10
+  snp_threshold: 3
+
+mask_filter:
+  coverage: 0.2
