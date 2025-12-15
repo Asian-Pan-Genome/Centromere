@@ -34,8 +34,8 @@ def main():
         main_HiCAT(cblocks, seqid_clustid, args.outdir)
         hicat_hor_stat(args.outdir, args.asatbed, args.distance)
     elif args.method == "HORmon":
-        #main_graph(cblocks, seqid_clustid, args.outdir)
-        #graph_hor_stat(cblocks, args.outdir)
+        main_graph(cblocks, seqid_clustid, args.outdir)
+        graph_hor_stat(cblocks, args.outdir)
         graph_hordecomposition_stat(cblocks, seqid_clustid, args.outdir)
     else:
         pass
@@ -43,3 +43,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
