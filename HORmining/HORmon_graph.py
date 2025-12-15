@@ -2,8 +2,8 @@ import numpy as np
 from collections import defaultdict,Counter
 import os
 import math
-# import networkx as nx
-# from networkx.drawing.nx_agraph import write_dot
+import networkx as nx
+from networkx.drawing.nx_agraph import write_dot
 from subprocess import check_call
 from get_continuous_block import regex_mn
 import csv
