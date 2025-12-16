@@ -55,6 +55,8 @@ To generate input files from data derived from the `SatelliteAnnotationWorkflow`
 awk '{if ($4!~/Sat/)print $1"\t"$2"\t"$3"\t"$1":"$2"-"$3"("$6")"}' ${sample}/${hap}/${sample}_${hap}.cenanno.bed | sort -V -k1,1 -k2,2n > ${sample}_${hap}.asat.sort.bed
 #<clusters.tsv>
 awk '{if ($4!~/Sat/)print $1":"$2"-"$3"("$6")""\t"$4}' ${sample}/${hap}/${sample}_${hap}.cenanno.bed | sort -V -k1,1 -k2,2n > ${sample}_${hap}.mn.index
+#run HORmining
+python HORmining.py -bed  ${sample}_${hap}.asat.sort.bed -c ${sample}_${hap}.mn.index -O ${outdir} -m HORmon
 ```
 
 ## Output Files
