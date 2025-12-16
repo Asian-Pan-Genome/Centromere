@@ -238,7 +238,7 @@ if [ -s \"cenpos.check\" ];then
 fi
 mv ${prefix}.g5.global.raw.cenpos ${prefix}.round0.global.cenpos
 echo \"blastn2bed done!\"
-rm ${prefix}.g5.bed ${prefix}.g5.alpha.cenpos
+rm ${prefix}.g5.global.bed ${prefix}.g5.global.alpha.cenpos
 date
 " >0alphaglobal.sh
 
@@ -380,6 +380,8 @@ if [ -f \"${prefix}.round0.cenanno\" ] && [ -f \"${prefix}.round0.cenpos\" ];the
 else
     echo \"could not find inputfiles!\"
 fi
+python $mergesatpy ${prefix}_${hap}.cenanno.bed ${prefix}_${hap}.merged.cenanno.bed
+$bedtools intersect -a ${prefix}_${hap}.merged.cenanno.bed -b ${prefix}.round1.cenpos -f 1.0 | sort -V -k1,1 -k2,2n | datamash -g 1 min 2 max 3 > ${prefix}_${hap}.cent.bed
 " > 0barplot.sh
 #sbatch -J barplot_${prefix}_${hap} -o barplot.log -e barplot.error 0barplot.sh
 #sh 0barplot.sh
