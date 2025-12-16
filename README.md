@@ -18,7 +18,7 @@ This project provides precise characterization of centromeric regions, including
 
 The `Annotation` directory contains the final, high-quality annotation data.
 
-- Complete centromere coordinates in APGp1 : [APGp1_complete_centromere](https://raw.githubusercontent.com/Asian-Pan-Genome/Centromere/refs/heads/main/Annotation/APGp1_complete_centromere_coordinates.bed)
+- Complete centromere coordinates in APGp1 : [APGp1_complete_centromere](https://github.com/Asian-Pan-Genome/Centromere/raw/refs/heads/main/Annotation/APGp1_complete_centromere_coordinates.bed))
 
 - Satellite tracks for each phased assembly: [native_bed_format](https://github.com/Asian-Pan-Genome/Centromere/tree/main/Annotation/CenSat)
 
