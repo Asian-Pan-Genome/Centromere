@@ -84,15 +84,25 @@ bash 0barplot.sh False
 bash 0barplot.sh True
 ```
 ## Output files
-- **(Peri-)Centromeric Coordinates**:
+### Centromeric Coordinates
+- **File**: `${sample}/${hap}/${sample}_${hap}.cent.bed`
+- **Format**: `chromosome\tstart\tend`
+- **Description**: BED file containing the genomic coordinates of the predicted centromeric regions for each haplotype.
   
-  ```${sample}/${hap}/${sample}_${hap}.round1.cenpos```
-      formated as ```chromosome\tstart\tend```
-- **Satellite Annotation Track**:
-  
-  ```${sample}/${hap}/${sample}_${hap}.cenanno.bed```
-  formated as ```chromosome\tstart\tend\tsatellite\tscore\tstrand\tstart\tend\tcolor```
-  
-- **Chromosome-level and genome-wide centromere visualization for manual QC**：
-  located in ``` ${sample}/${hap}/barplot/round1/```
+### Satellite Annotation Tracks
+   **Detailed Satellite Annotation**:
+   - **File**: `${sample}/${hap}/${sample}_${hap}.cenanno.bed`
+   - **Format**: `chromosome\tstart\tend\tsatellite\tscore\tstrand\tstart\tend\tcolor`
+   - **Description**: Detailed, unmerged annotation track of satellite repeats within the centromeric regions.
 
+   **Merged Satellite Annotation (for visualization)**:
+   - **File**: `${sample}/${hap}/${sample}_${hap}.merged.cenanno.bed`
+   - **Format**: `chromosome\tstart\tend\tsatellite\tscore\tstrand\tstart\tend\tcolor`
+   - **Description**: Satellite annotation track where adjacent or closely spaced satellite units have been merged based on a distance threshold. This file is optimized for visualization in genome browsers, providing a clearer and more interpretable overview of satellite repeat organization.
+  
+### Visualization Plots for Manual Quality Control
+- **Location**: `${sample}/${hap}/barplot/round1/`
+- **Description**: Contains chromosome-level and genome-wide bar plots showing the distribution of satellite repeats within predicted centromeric regions. These plots are generated for manual inspection of the centromere coordinates.
+
+## To Do
+Integrate the entire workflow into a Snakemake pipeline for improved reproducibility, scalability, and automated execution.
