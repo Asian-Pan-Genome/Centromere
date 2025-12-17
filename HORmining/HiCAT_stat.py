@@ -134,7 +134,9 @@ def hicat_hor_stat(outdir, asatbed,  distance=10000):
     cblocks = CountinuousBlock(asatbed, distance)
     #b_hors = {}
     statfile = os.path.join(outdir, "HiCAT", "HiCAT.hor.stat.xls")
+    summaryfile = os.path.join(outdir, "HiCAT", "HiCAT.hor.summary.xls")
     outf = open(statfile, 'w')
+    outs = open(summaryfile, 'w')
 
     for i, iblock in enumerate(cblocks):
         chrom = iblock[1]
@@ -156,6 +158,18 @@ def hicat_hor_stat(outdir, asatbed,  distance=10000):
         else:
             outf.write(f"{i}\t{chrom}\t{start}\t{end}\t{blen}\t{num}\tNa\tNa\tNa\tNa\n")
 
+        f_all_reorder = os.path.join(outdir, "HiCAT", str(i) +  ".all_layer.xls.reorder.xls")
+        if os.path.exists(f_all_reorder) and os.path.getsize(f_all_reorder) > 0:
+            with open(f_all_reorder, "r") as inf:
+                for line in inf:
+                    line = line.strip()
+                    outs.write(f"{i}\t{start}\t{end}\t{blen}\t{num}\t{line}\n")
+        else:
+            tmp = "\t".join(['Na']*9)
+            outs.write(f"{i}\t{start}\t{end}\t{blen}\t{num}\t{tmp}\n")
+
+    outf.close()
+    outs.close()
 
 
 if __name__ == "__main__":
