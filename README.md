@@ -26,6 +26,8 @@ The `Annotation` directory contains the final, high-quality annotation data.
 
 - HOR identified by HiCAT: [HOR_HiCAT](https://github.com/Asian-Pan-Genome/Centromere/blob/main/Annotation/HOR/HOR_HiCAT.zip)
 
+- CENP-A enrichment boundaries: [native_bed_format](https://github.com/Asian-Pan-Genome/Centromere/blob/main/Annotation/CENP-A_enrichment_boundary.bed)
+
 ## 3. Recommended Workflows
 
 We provide and highly recommend the following two pipelines for future T2T human assemblies and related satellite studies.
