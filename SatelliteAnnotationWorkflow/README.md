@@ -66,6 +66,8 @@ This creates the following scripts in the ```${sample}/${hap}``` directory:
 
 - **```0barplot.sh```** — Merge annotation tracks, generate centromere coordinates and visualization
 
+The directory **```demo```** contains example results from sample C001-CHA-E01-01 Maternal haploid.
+
 ### Step 3: Run Annotation Scripts
 
 Run the scripts in the following order:
