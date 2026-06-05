@@ -18,22 +18,15 @@ Contains the full set of HOR structural variants (StVs), including both **top-la
 
 | **Column name**            | **Description** |
 |----------------------------|------------------|
-| **sample**                 | Sample ID |
-| **hap**                    | Haploid (e.g., Mat/Pat) |
-| **blockID**                | Block identifier |
-| **block_start**            | Block start coordinate |
-| **block_end**              | Block end coordinate |
-| **block_length**              | Length of the block |
-| **block_monomer_count**    | Number of monomers in the block |
-| **sample_hap_chromosome**  | Chromosome identifier |
-| **horstart**               | HOR start position |
-| **horend**                 | HOR end position |
-| **index_start**            | Start index of monomers |
-| **index_end**              | End index of monomers |
-| **nrepeat**                | Copy number of HOR unit |
-| **HOR/monomer_id**         | HOR ID or monomer ID |
-| **layer**                  | Annotation layer (top/cover) |
-| **reorder_HOR**            | Reordered HOR (e. g. 2-3-4-1 ---> 1-2-3-4) |
+| **Sample#hap#chromosome**  | Chromosome identifier |
+| **Start**               | HOR start position |
+| **End**                 | HOR end position |
+| **Start_index**            | Start index of monomers |
+| **End_index**              | End index of monomers |
+| **Repeat_count**                | Copy number of HOR unit |
+| **HOR(Dimer)**         | HOR ID or monomer ID |
+| **Layer**                  | Annotation layer (top/cover) |
+| **ReorderED_HOR(Dimer)**            | Reordered HOR (e. g. 2-3-4-1 ---> 1-2-3-4) |
 
 ---
 
@@ -45,10 +38,9 @@ Provides **decomposed HOR structural variants** for visualization.
 
 | **Column name**            | **Description** |
 |----------------------------|------------------|
-| **sample_hap_chromosome**  | Chromosome identifier |
-| **start**                  | Genomic start |
-| **end**                    | Genomic end |
-| **HOR/monomer_id**         | HOR ID or monomer ID |
+| **Sample#hap#chromosome**  | Chromosome identifier |
+| **Start**                  | Genomic start |
+| **End**                    | Genomic end |
 | **HORindex**               | Index of the HOR/monomer |
 | **HOR_color**              | Visualization color code |
 
@@ -62,10 +54,8 @@ For each haploid assembly, the HORmon output provides monomer-level annotations.
 
 | **Column name**            | **Description** |
 |----------------------------|------------------|
-| **sample_hap_chromosome**  | Chromosome identifier |
-| **start**                  | Genomic start |
-| **end**                    | Genomic end |
-| **monomer_id**             | Monomer identifier |
-| **HORrarray**               | HOR array assignment |
-| **HORarray_color**         | Color code for HOR array |
+| **Sample#hap#chromosome**  | Chromosome identifier |
+| **Start**                  | Genomic start |
+| **End**                    | Genomic end |
+| **HORindex**             | Monomer identifier |
 | **HOR_color**              | Color code for monomer/HOR |
