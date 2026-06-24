@@ -11,6 +11,7 @@ This part describes the pipeline used to generate normalized CUT&Tag enrichment 
 * Trimed reads were aligned to the corresponding diploid assembly with [BWA](https://github.com/lh3/BWA);
 * Multi-mapped reads were discarded using [samtools](https://github.com/samtools/samtools);
 * Normalized CENP‑A enrichment was calculated with [bamCompare](https://deeptools.readthedocs.io/en/develop/content/tools/bamCompare.html);
+
 The complete workflow is implemented in the script ```cut_tag.sh```.
 
 ### 2. CDR annotation
