@@ -26,7 +26,7 @@ The complete pipeline is implemented in the script ```cdr_finder.sh```.
 ### 3. Centromere local identity
 
 This part describes the pipelines for calculating local sequence identity of centromere region;
-*  StainedGlass is used to compute pairwise identity across fixed‑size windows in centromere region;
+*  [StainedGlass](https://github.com/vollgerlab/StainedGlass) is used to compute pairwise identity across fixed‑size windows in centromere region;
 * The custom script ```src/heat2bed.py``` processes the StainedGlass output to get local sequence identity values per window;
 
 The complete pipeline is implemented in the script ```cdr_id.sh```.
