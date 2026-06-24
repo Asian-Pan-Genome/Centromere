@@ -1,4 +1,4 @@
-# Centromere Epigenetics
+# Centromere Epigenetics Analysis
 
 This directory contains pipelines for epigenetic analysis for centromere. 
 
