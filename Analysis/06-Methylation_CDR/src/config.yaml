@@ -1,0 +1,6 @@
+target_bed: asat.draft.bed
+meth_tsv: sample_name.tsv
+rm_out: sample_name.rm.out
+window_size: 5000
+sample: sample_name
+len_filter: 20000
