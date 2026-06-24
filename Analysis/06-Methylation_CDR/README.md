@@ -1,4 +1,4 @@
-# Structurally Complex Regions and Structural Haplotypes
+# Centromere epigenetics
 
 This directory contains pipelines for epigenetic analysis for centromere. 
 
