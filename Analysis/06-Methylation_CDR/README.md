@@ -19,14 +19,14 @@ The complete workflow is implemented in the script ```cut_tag.sh```.
 This part describes the workflow for annotating centromere dip regions (CDRs).
 * HiFi or ONT reads are mapped to the diploid genome using [winnowmap2](https://github.com/marbl/winnowmap);
 * Methylation frequencies are called with [pb-CpG-tools](https://github.com/PacificBiosciences/pb-CpG-tools)(HiFi) or [modkit](https://github.com/nanoporetech/modkit)(ONT);
-* CDRs are annotated from the resulting methylation frequency with [CDR-Finder](https://github.com/arozanski97/CDR-Finder).
+* CDRs are annotated from the resulting methylation frequency with [CDR-Finder](https://github.com/arozanski97/CDR-Finder);
 
 The complete pipeline is implemented in the script ```cdr_finder.sh```.
 
 ### 3. Centromere local identity
 
-This part describes the pipelines for calculating local sequence identity of centromere region.
-*  StainedGlass is used to compute pairwise identity across fixed‑size windows in centromere region.
-* The custom script ```src/heat2bed.py``` processes the StainedGlass output to get local sequence identity values per window.
+This part describes the pipelines for calculating local sequence identity of centromere region;
+*  StainedGlass is used to compute pairwise identity across fixed‑size windows in centromere region;
+* The custom script ```src/heat2bed.py``` processes the StainedGlass output to get local sequence identity values per window;
 
 The complete pipeline is implemented in the script ```cdr_id.sh```.
