@@ -28,6 +28,22 @@ The `Annotation` directory contains the final, high-quality annotation data.
 
 - CENP-A enrichment boundaries: [native_bed_format](https://github.com/Asian-Pan-Genome/Centromere/blob/main/Annotation/CENP-A_enrichment_boundary.bed)
 
+
+
+
+The `Results` directory contains analysis outputs and supplementary data files.
+
+- Centromere architecture figures (PDF): [`Centromere_Architecture_Figures.zip`](https://github.com/Asian-Pan-Genome/Centromere/raw/refs/heads/main/Results/Centromere_Architecture_Figures.zip)
+
+- CenHap classification table (TXT): [`CenHap_Classification_Table.txt`](https://github.com/Asian-Pan-Genome/Centromere/raw/refs/heads/main/Results/CenHap_Classification_Table.txt)
+
+- CENP-A CDR images (PDF): [`CENPA_CDR_Images.zip`](https://github.com/Asian-Pan-Genome/Centromere/raw/refs/heads/main/Results/CENPA_CDR_Images.zip)
+
+- Pericentromeric phylogeny & tanglegrams (PDF, Newick): [`Pericentromeric_Phylogeny_and_Tanglegrams.zip`](https://github.com/Asian-Pan-Genome/Centromere/raw/refs/heads/main/Results/Pericentromeric_Phylogeny_and_Tanglegrams.zip)
+
+- Mutation sample pairs (PDF): [`Mutation_Sample_Pairs.zip`](https://github.com/Asian-Pan-Genome/Centromere/raw/refs/heads/main/Results/Mutation_Sample_Pairs.zip)
+
+
 ## 3. Recommended Workflows
 
 We provide and highly recommend the following two pipelines for future T2T human assemblies and related satellite studies.
