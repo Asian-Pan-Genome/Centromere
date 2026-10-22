@@ -1,0 +1,277 @@
+configfile: "config/config.yaml"
+
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(workflow.basedir) / "workflow" / "scripts"))
+from satellite import validate_config
+
+validate_config(config)
+SAMPLES = list(config["samples"])
+MODES = config["alpha_databases"]
+ROOT = config["output_dir"].rstrip("/")
+CODE = "workflow/scripts/satellite.py"
+REF = config.get("reference", {})
+REF_ENABLED = bool(REF.get("enabled"))
+HSAT23 = config["hsat23"]
+
+REFERENCE_OUTPUTS = []
+if REF_ENABLED:
+    REFERENCE_OUTPUTS = (
+        expand(ROOT + "/{sample}/{mode}/centromere.reference_guided.bed", sample=SAMPLES, mode=MODES) +
+        expand(ROOT + "/{sample}/{mode}/reference_boundary_qc.tsv", sample=SAMPLES, mode=MODES) +
+        expand(ROOT + "/{sample}/{mode}/satellites.reference_guided.merged.bed", sample=SAMPLES, mode=MODES) +
+        expand(ROOT + "/{sample}/{mode}/annotation.reference_guided.pdf", sample=SAMPLES, mode=MODES) +
+        expand(ROOT + "/{sample}/shared/reference_search_window.bed", sample=SAMPLES)
+    )
+
+wildcard_constraints:
+    sample="[A-Za-z0-9_.-]+",
+    mode="T2T-CHM13_database|Global_database"
+
+rule all:
+    input:
+        expand(ROOT + "/{sample}/{mode}/centromere.bed", sample=SAMPLES, mode=MODES),
+        expand(ROOT + "/{sample}/{mode}/boundary_qc.tsv", sample=SAMPLES, mode=MODES),
+        expand(ROOT + "/{sample}/{mode}/satellites.full.bed", sample=SAMPLES, mode=MODES),
+        expand(ROOT + "/{sample}/{mode}/satellites.centromeric.bed", sample=SAMPLES, mode=MODES),
+        expand(ROOT + "/{sample}/{mode}/satellites.merged.bed", sample=SAMPLES, mode=MODES),
+        expand(ROOT + "/{sample}/{mode}/annotation.pdf", sample=SAMPLES, mode=MODES),
+        ROOT + "/provenance.json",
+        REFERENCE_OUTPUTS
+
+rule provenance:
+    input:
+        code=CODE,
+        libraries=config["repeatmasker"]["library_files"],
+        databases=[config["databases"][mode] for mode in MODES],
+        kmer2=HSAT23["kmer2"],
+        kmer3=HSAT23["kmer3"],
+        environment="environment.yml",
+        perl=HSAT23["perl_script"],
+        reference=([REF["genome"], REF["centromere_bed"]] if REF_ENABLED else [])
+    output: ROOT + "/provenance.json"
+    params: settings=config
+    log: ROOT + "/logs/provenance.log"
+    script: "workflow/scripts/dispatch.py"
+
+rule prepare_fasta:
+    input:
+        fasta=lambda wc: config["samples"][wc.sample],
+        code=CODE
+    output:
+        fasta=ROOT + "/{sample}/shared/input.fasta",
+        fai=ROOT + "/{sample}/shared/input.fasta.fai",
+        metadata=ROOT + "/{sample}/shared/input.json"
+    log: ROOT + "/{sample}/logs/prepare.log"
+    script: "workflow/scripts/dispatch.py"
+
+rule build_alpha_database:
+    input:
+        fasta=lambda wc: config["databases"][wc.mode],
+        code=CODE
+    output:
+        nin=ROOT + "/databases/{mode}/monomers.nin",
+        nhr=ROOT + "/databases/{mode}/monomers.nhr",
+        nsq=ROOT + "/databases/{mode}/monomers.nsq"
+    log: ROOT + "/logs/build_{mode}.log"
+    script: "workflow/scripts/dispatch.py"
+
+rule alpha_blast:
+    input:
+        fasta=ROOT + "/{sample}/shared/input.fasta",
+        nin=ROOT + "/databases/{mode}/monomers.nin",
+        nhr=ROOT + "/databases/{mode}/monomers.nhr",
+        nsq=ROOT + "/databases/{mode}/monomers.nsq",
+        provenance=ROOT + "/provenance.json",
+        code=CODE
+    output: ROOT + "/{sample}/{mode}/alpha.blast.tsv"
+    threads: config["alpha"]["threads"]
+    resources: mem_mb=config["alpha"]["mem_mb"]
+    params: evalue=config["alpha"]["evalue"]
+    log: ROOT + "/{sample}/logs/alpha_{mode}.log"
+    script: "workflow/scripts/dispatch.py"
+
+rule alpha_filter:
+    input:
+        blast=ROOT + "/{sample}/{mode}/alpha.blast.tsv",
+        fai=ROOT + "/{sample}/shared/input.fasta.fai",
+        code=CODE
+    output: ROOT + "/{sample}/{mode}/alpha.monomers.bed"
+    params: settings=config["alpha"]
+    log: ROOT + "/{sample}/logs/filter_{mode}.log"
+    script: "workflow/scripts/dispatch.py"
+
+rule hsat23:
+    input:
+        fasta=ROOT + "/{sample}/shared/input.fasta",
+        fai=ROOT + "/{sample}/shared/input.fasta.fai",
+        perl=HSAT23["perl_script"],
+        kmer2=HSAT23["kmer2"],
+        kmer3=HSAT23["kmer3"],
+        provenance=ROOT + "/provenance.json",
+        code=CODE
+    output: ROOT + "/{sample}/shared/HSat23.bed"
+    resources: mem_mb=16000
+    log: ROOT + "/{sample}/logs/hsat23.log"
+    script: "workflow/scripts/dispatch.py"
+
+rule repeatmasker:
+    input:
+        fasta=ROOT + "/{sample}/shared/input.fasta",
+        provenance=ROOT + "/provenance.json",
+        libraries=config["repeatmasker"]["library_files"],
+        code=CODE
+    output:
+        gff=ROOT + "/{sample}/shared/repeatmasker.gff",
+        out=ROOT + "/{sample}/shared/repeatmasker.out",
+        metadata=ROOT + "/{sample}/shared/repeatmasker.json"
+    threads: config["repeatmasker"]["threads"]
+    resources: mem_mb=config["repeatmasker"]["mem_mb"]
+    params: settings=config["repeatmasker"]
+    log: ROOT + "/{sample}/logs/repeatmasker.log"
+    script: "workflow/scripts/dispatch.py"
+
+rule repeatmasker_satellites:
+    input:
+        gff=ROOT + "/{sample}/shared/repeatmasker.gff",
+        fai=ROOT + "/{sample}/shared/input.fasta.fai",
+        code=CODE
+    output:
+        hsat1=ROOT + "/{sample}/shared/HSat1.bed",
+        bsat=ROOT + "/{sample}/shared/BSat.bed",
+        gsat=ROOT + "/{sample}/shared/GSat.bed"
+    log: ROOT + "/{sample}/logs/repeatmasker_satellites.log"
+    script: "workflow/scripts/dispatch.py"
+
+rule merge_and_boundaries:
+    input:
+        alpha=ROOT + "/{sample}/{mode}/alpha.monomers.bed",
+        hsat23=ROOT + "/{sample}/shared/HSat23.bed",
+        hsat1=ROOT + "/{sample}/shared/HSat1.bed",
+        bsat=ROOT + "/{sample}/shared/BSat.bed",
+        gsat=ROOT + "/{sample}/shared/GSat.bed",
+        fai=ROOT + "/{sample}/shared/input.fasta.fai",
+        code=CODE
+    output:
+        full=ROOT + "/{sample}/{mode}/satellites.full.bed",
+        window=ROOT + "/{sample}/{mode}/search_window.bed",
+        selected=ROOT + "/{sample}/{mode}/satellites.centromeric.bed",
+        merged=ROOT + "/{sample}/{mode}/satellites.merged.bed",
+        cent=ROOT + "/{sample}/{mode}/centromere.bed",
+        qc=ROOT + "/{sample}/{mode}/boundary_qc.tsv"
+    params: settings=config["boundaries"]
+    resources: mem_mb=16000
+    log: ROOT + "/{sample}/logs/boundaries_{mode}.log"
+    script: "workflow/scripts/dispatch.py"
+
+rule plot:
+    input:
+        bed=ROOT + "/{sample}/{mode}/satellites.merged.bed",
+        cent=ROOT + "/{sample}/{mode}/centromere.bed",
+        fai=ROOT + "/{sample}/shared/input.fasta.fai",
+        code=CODE
+    output: ROOT + "/{sample}/{mode}/annotation.pdf"
+    log: ROOT + "/{sample}/logs/plot_{mode}.log"
+    script: "workflow/scripts/dispatch.py"
+
+
+if REF_ENABLED:
+    rule reference_anchors:
+        input:
+            genome=REF["genome"],
+            centromeres=REF["centromere_bed"],
+            code=CODE
+        output:
+            genome=ROOT + "/reference/reference.fa",
+            fai=ROOT + "/reference/reference.fa.fai",
+            anchors=ROOT + "/reference/reference_anchors.bed",
+            fasta=ROOT + "/reference/reference_anchors.fa",
+            metadata=ROOT + "/reference/reference_anchors.json"
+        params:
+            flank=REF["flank"],
+            bedtools=REF["bedtools_executable"]
+        log: ROOT + "/logs/reference_anchors.log"
+        script: "workflow/scripts/dispatch.py"
+
+    rule map_reference_anchors:
+        input:
+            anchors=ROOT + "/reference/reference_anchors.fa",
+            target=ROOT + "/{sample}/shared/input.fasta",
+            fai=ROOT + "/{sample}/shared/input.fasta.fai",
+            code=CODE
+        output:
+            paf=ROOT + "/{sample}/shared/reference_anchors.paf",
+            mapped=ROOT + "/{sample}/shared/reference_anchors.mapped.bed",
+            qc=ROOT + "/{sample}/shared/reference_anchor_mapping_qc.tsv"
+        threads: REF["threads"]
+        resources: mem_mb=REF["mem_mb"]
+        params:
+            executable=REF["minimap2_executable"],
+            preset=REF["preset"],
+            min_mapq=REF["min_mapq"],
+            min_query_coverage=REF["min_query_coverage"],
+            max_unaligned_bp=REF["max_unaligned_bp"]
+        log: ROOT + "/{sample}/logs/reference_mapping.log"
+        script: "workflow/scripts/dispatch.py"
+
+    rule projected_windows:
+        input:
+            mapped=ROOT + "/{sample}/shared/reference_anchors.mapped.bed",
+            fai=ROOT + "/{sample}/shared/input.fasta.fai",
+            code=CODE
+        output:
+            windows=ROOT + "/{sample}/shared/reference_search_window.bed",
+            cores=ROOT + "/{sample}/shared/reference_projected_core.bed",
+            qc=ROOT + "/{sample}/shared/reference_projection_qc.tsv"
+        params: boundaries=config["boundaries"]
+        log: ROOT + "/{sample}/logs/reference_window.log"
+        script: "workflow/scripts/dispatch.py"
+
+    rule reference_intersect:
+        input:
+            satellites=ROOT + "/{sample}/{mode}/satellites.full.bed",
+            windows=ROOT + "/{sample}/shared/reference_search_window.bed",
+            fai=ROOT + "/{sample}/shared/input.fasta.fai",
+            code=CODE
+        output: ROOT + "/{sample}/{mode}/satellites.reference_window.bed"
+        params: executable=REF["bedtools_executable"]
+        log: ROOT + "/{sample}/logs/reference_intersect_{mode}.log"
+        script: "workflow/scripts/dispatch.py"
+
+    rule reference_boundaries:
+        input:
+            selected=ROOT + "/{sample}/{mode}/satellites.reference_window.bed",
+            full=ROOT + "/{sample}/{mode}/satellites.full.bed",
+            windows=ROOT + "/{sample}/shared/reference_search_window.bed",
+            baseline=ROOT + "/{sample}/{mode}/centromere.bed",
+            fai=ROOT + "/{sample}/shared/input.fasta.fai",
+            projection_qc=ROOT + "/{sample}/shared/reference_projection_qc.tsv",
+            code=CODE
+        output:
+            cent=ROOT + "/{sample}/{mode}/centromere.reference_guided.bed",
+            qc=ROOT + "/{sample}/{mode}/reference_boundary_qc.tsv"
+        params:
+            boundaries=config["boundaries"],
+            edge_warning=REF["edge_warning"],
+            outside_warning=REF["outside_warning"]
+        log: ROOT + "/{sample}/logs/reference_boundaries_{mode}.log"
+        script: "workflow/scripts/dispatch.py"
+
+    rule reference_merge:
+        input:
+            satellites=ROOT + "/{sample}/{mode}/satellites.reference_window.bed",
+            fai=ROOT + "/{sample}/shared/input.fasta.fai",
+            code=CODE
+        output: ROOT + "/{sample}/{mode}/satellites.reference_guided.merged.bed"
+        log: ROOT + "/{sample}/logs/reference_merge_{mode}.log"
+        script: "workflow/scripts/dispatch.py"
+
+    rule reference_plot:
+        input:
+            bed=ROOT + "/{sample}/{mode}/satellites.reference_guided.merged.bed",
+            cent=ROOT + "/{sample}/{mode}/centromere.reference_guided.bed",
+            fai=ROOT + "/{sample}/shared/input.fasta.fai",
+            code=CODE
+        output: ROOT + "/{sample}/{mode}/annotation.reference_guided.pdf"
+        log: ROOT + "/{sample}/logs/reference_plot_{mode}.log"
+        script: "workflow/scripts/dispatch.py"

@@ -1,0 +1,61 @@
+# Legacy C001 example. Prefer tests/data/test.config.yaml for the bundled test.
+# If using this file, copy to config/test.local.yaml and edit RepeatMasker/Dfam
+# and HSat2/3 paths.
+# The FASTA files are decompressed from tests/data/*.fa.gz by tests/run_test.sh.
+samples:
+  C001_CHA_E01_Mat_chr2: "tests/data/C001-CHA-E01#Mat#chr2.fasta"
+
+alpha_databases: [T2T-CHM13_database, Global_database]
+databases:
+  T2T-CHM13_database: resources/MonomerT2TDB/MonomerT2T.consensus.fa
+  Global_database: resources/MonomerGlobalDB/MonomerGlobalDB.fasta
+
+output_dir: results/C001_chr2_dfam3.8
+repeatmasker:
+  executable: RepeatMasker
+  expected_version: "4.1.6"
+  library_label: "Dfam 3.8"
+  library_files:
+    - /PATH/TO/RepeatMasker/Libraries/famdb/dfam38_full.0.h5
+    - /PATH/TO/RepeatMasker/Libraries/famdb/rmlib.config
+  species: human
+  threads: 16
+  mem_mb: 32000
+
+hsat23:
+  perl_script: /path/to/chm13_hsat/Assembly_HSat2and3_v3.pl
+  kmer2: /path/to/chm13_hsat/HSat2_kmers.txt
+  kmer3: /path/to/chm13_hsat/HSat3_kmers.txt
+
+alpha:
+  threads: 8
+  mem_mb: 16000
+  min_identity: 90
+  min_alignment_length: 100
+  evalue: 1.0e-10
+
+boundaries:
+  acrocentric_chromosomes: [chr13, chr14, chr15, chr21, chr22]
+  chromosome_aliases: {}
+  initial_flank: 5000000
+  extension_distance: 2000000
+  long_satellite: 10000
+  step_padding: 100000
+  stop_padding: 1900000
+
+reference:
+  enabled: true
+  mapping_method: minimap2
+  genome: tests/data/CHM13v2.chr2.fa
+  centromere_bed: tests/data/CHM13v2.chr2.cent.bed
+  minimap2_executable: minimap2
+  bedtools_executable: bedtools
+  preset: asm5
+  threads: 4
+  mem_mb: 8000
+  flank: 500000
+  min_mapq: 20
+  min_query_coverage: 0.80
+  max_unaligned_bp: 10000
+  edge_warning: 100000
+  outside_warning: 500000

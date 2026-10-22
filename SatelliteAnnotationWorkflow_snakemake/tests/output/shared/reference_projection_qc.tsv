@@ -1,0 +1,2 @@
+target_chromosome	canonical_chromosome	status	projected_core_start	projected_core_end	window_start	window_end	manual_review_required
+C001-CHA-E01#Mat#chr2	chr2	projected_window	89353650	94422321	88853506	94922255	no

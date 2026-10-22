@@ -1,0 +1,12 @@
+results/
+.snakemake/
+__pycache__/
+*.pyc
+*.log
+config/local*.yaml
+config/test.local.yaml
+tests/data/*.fai
+tests/data/CHM13v2.cent.bed
+tests/data/C001-CHA-E01#Mat#chr2.fasta
+tests/data/CHM13v2.chr2.fa
+tests/data/*.tmp.*

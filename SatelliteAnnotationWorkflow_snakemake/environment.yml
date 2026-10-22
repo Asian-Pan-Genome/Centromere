@@ -1,0 +1,17 @@
+name: SatelliteAnnotationEnv
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - python=3.11
+  - snakemake-minimal=8.25.5
+  - blast=2.16.0
+  - samtools=1.21
+  - bedtools=2.31.1
+  - minimap2=2.29
+  - rmblast=2.14.1
+  - perl=5.32.1
+  - matplotlib=3.9.4
+  - pyyaml=6.0.2
+  - pip

@@ -1,0 +1,70 @@
+# All relative paths are relative to the workflow root (run Snakemake there).
+# Keys identify separate sample/haplotype/chromosome inputs; no fixed FASTA layout.
+samples:
+  sample_hap_chr2: /PATH/TO/sample_hap_chr2.fasta
+
+# Use either database or both. Never pool the two alpha annotations.
+alpha_databases: [T2T-CHM13_database, Global_database]
+databases:
+  T2T-CHM13_database: resources/MonomerT2TDB/MonomerT2T.consensus.fa
+  Global_database: resources/MonomerGlobalDB/MonomerGlobalDB.fasta
+
+# Change this for database/software comparisons, so old results are preserved.
+output_dir: results/dfam3.8_baseline
+repeatmasker:
+  executable: RepeatMasker
+  expected_version: "4.1.6"
+  library_label: "Dfam 3.8"
+  # Required: files actually installed in the configured RepeatMasker library.
+  # List every relevant FamDB partition (including root) or the installed library.
+  # These are hashed/tracked, NOT automatically installed by this workflow.
+  library_files: []
+  species: human
+  threads: 16  # RMBlast uses up to 4 cores per RepeatMasker -pa batch.
+  mem_mb: 32000
+
+# Obtain these three files separately from https://github.com/altemose/chm13_hsat .
+# Absolute paths or paths relative to the workflow root are accepted.
+hsat23:
+  perl_script: /path/to/chm13_hsat/Assembly_HSat2and3_v3.pl
+  kmer2: /path/to/chm13_hsat/HSat2_kmers.txt
+  kmer3: /path/to/chm13_hsat/HSat3_kmers.txt
+
+alpha:
+  threads: 8
+  mem_mb: 16000
+  min_identity: 90
+  min_alignment_length: 100
+  evalue: 1.0e-10
+
+boundaries:
+  # Human chromosome-forward assemblies only; do not supply reversed chromosomes.
+  acrocentric_chromosomes: [chr13, chr14, chr15, chr21, chr22]
+  # Optional: map exact FASTA identifiers to canonical human chromosome names.
+  # e.g. {NC_000022.11: chr22}; chr22 and sample#hap#chr22 work automatically.
+  chromosome_aliases: {}
+  initial_flank: 5000000
+  extension_distance: 2000000
+  long_satellite: 10000
+  step_padding: 100000
+  stop_padding: 1900000
+
+# Optional reference-guided validation. Reference boundary flanks are aligned
+# directly to each sample FASTA with minimap2; no chain file is required.
+# The reference BED is BED3, 0-based, half-open, with one centromere per chromosome.
+reference:
+  enabled: false
+  mapping_method: minimap2
+  genome: null
+  centromere_bed: null
+  minimap2_executable: minimap2
+  bedtools_executable: bedtools
+  preset: asm5
+  threads: 4
+  mem_mb: 8000
+  flank: 500000
+  min_mapq: 20
+  min_query_coverage: 0.80
+  max_unaligned_bp: 10000
+  edge_warning: 100000
+  outside_warning: 500000

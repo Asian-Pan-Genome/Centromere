@@ -1,0 +1,2 @@
+chromosome	canonical_chromosome	status	window_start	window_end	centromere_start	centromere_end	manual_review_required
+C001-CHA-E01#Mat#chr2	chr2	automatic_heuristic	63531139	138889861	70431139	132095987	yes

@@ -1,0 +1,2 @@
+chromosome	canonical_chromosome	status	projected_window_start	projected_window_end	baseline_start	baseline_end	reference_guided_start	reference_guided_end	manual_review_required
+C001-CHA-E01#Mat#chr2	chr2	reference_guided_satellite_envelope	88853506	94922255	70431139	132095987	89353650	94421968	no
