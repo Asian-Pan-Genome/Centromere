@@ -30,6 +30,31 @@ python HORmining.py -bed <input.bed> -c <clusters.tsv> -O <output_dir> -m HiCAT
 python HORmining.py -bed <input.bed> -c <clusters.tsv> -O <output_dir> -m HORmon
 ```
 
+## Minimal server smoke test
+
+The `tests/data` directory contains a small artificial monomer array consisting of repeated `1-2-3` units (36 monomers; 12 repeats). Cluster identifiers must be integers because the summary code normalizes HORs numerically. This dataset is intended only to confirm installation and execution; it is not a biological benchmark.
+
+Run both methods:
+
+```bash
+bash tests/run_smoke_test.sh
+```
+
+The script creates a timestamped directory under `tests/smoke_outputs`, runs HiCAT and HORmon, verifies their principal output files, and prints the output location. A successful run ends with:
+
+```text
+HORmining smoke tests passed
+```
+
+For a permanent record of the server test:
+
+```bash
+bash tests/run_smoke_test.sh 2>&1 | tee server_smoke_test.log
+```
+
+Please retain `server_smoke_test.log` and the generated output directory when reporting test results.
+
+
 ## Parameters
 
 | Parameter | Description | Required | 
